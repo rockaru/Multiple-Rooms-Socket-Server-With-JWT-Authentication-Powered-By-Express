@@ -1,0 +1,67 @@
+<html>
+
+<body>
+    <h4>WebSocket: <span id="wsStatus"></span></h4>
+    <h5>Group: <span id="joinedGroup"></span></h5>
+    <input id="group" type="text">
+    <!-- a hardoced group name -->
+    <button onclick="bjoin();">join group</button><br>
+    <input id="text" type="text" />
+    <div id="out"></div>
+    <script>
+
+        var group
+        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE1OTU0MTM1MDF9.9NxLjgowzH5zVwxDdHMMEtznkgVWnvHVhQyEXviipMY";
+        var ws = new WebSocket('ws://localhost:6556');
+        ws.onerror = function (e) { out.innerHTML = e; }
+        ws.onclose = function (e) { out.innerHTML = 'closed' + e; }
+        ws.onopen = function () {
+            var msg = {
+                type: 'authenticate',
+                payload: { token: token }
+            };
+            ws.send(JSON.stringify(msg));
+            wsStatus.innerHTML = 'connected ';
+        }
+        ws.onmessage = function (ms) { out.innerHTML += ms.data + '<br>'; }
+
+        function send(msg) {
+            ws.send(JSON.stringify({ msg: msg }));
+        }
+
+        function broadcast(msg, room) {
+            var msg = {
+                type: 'authenticate',
+                payload: {
+                    token: token,
+                    room: room,
+                    msg: msg
+                }
+            };
+            ws.send(JSON.stringify(msg))
+        }
+
+        function join(room) {
+            var msg = {
+                type: 'authenticate',
+                payload: {
+                    token: token,
+                    join: room
+                }
+            };
+            joinedGroup.innerHTML = room
+            ws.send(JSON.stringify(msg));
+        }
+        function bjoin() {
+            //alert(group);
+            group = document.getElementById("group").value;
+            join(group);
+        }
+        text.onchange = function (el) {
+            //alert(el.target.value);
+            broadcast(el.target.value, group);
+        }
+    </script>
+</body>
+
+</html>
