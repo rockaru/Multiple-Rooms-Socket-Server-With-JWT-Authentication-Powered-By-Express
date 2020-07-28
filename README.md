@@ -1,1 +1,1 @@
-# Multiple-Rooms-Socket-Server-With-Basic-Authentication-Powered-By-Express
+# Multiple Rooms Socket Server With JWT Token Authentication Powered-By-Express
